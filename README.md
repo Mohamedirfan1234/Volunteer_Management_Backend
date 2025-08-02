@@ -33,6 +33,7 @@ The application is configured to use Railway MySQL with the following connection
    - **Build Command:** `./mvnw clean package -DskipTests`
    - **Start Command:** `java -jar target/volunteer_backend-0.0.1-SNAPSHOT.jar`
    - **Port:** 8080
+   - **Health Check Path:** `/`
 
 3. **Environment Variables (optional - already in application.properties):**
    - `JAVA_VERSION`: 17
@@ -41,6 +42,12 @@ The application is configured to use Railway MySQL with the following connection
 4. **Deploy:**
    - Click "Create Web Service"
    - Render will automatically build and deploy your application
+
+### Health Check
+
+The application includes health check endpoints:
+- Root endpoint: `GET /` - Returns application status
+- Auth health: `GET /api/auth/health` - Returns authentication service status
 
 ### Local Development
 

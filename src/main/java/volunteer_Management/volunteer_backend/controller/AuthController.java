@@ -23,6 +23,11 @@ import java.util.Optional;
 @CrossOrigin(origins = "*")
 public class AuthController {
 
+    @GetMapping("/health")
+    public ResponseEntity<String> health() {
+        return ResponseEntity.ok("✅ Volunteer Backend is running!");
+    }
+
     @Autowired
     private UserRepository userRepository;
 
