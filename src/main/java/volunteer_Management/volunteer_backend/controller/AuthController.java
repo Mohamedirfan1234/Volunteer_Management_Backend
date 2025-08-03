@@ -3,9 +3,6 @@ package volunteer_Management.volunteer_backend.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.*;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import volunteer_Management.volunteer_backend.entity.User;
@@ -13,10 +10,8 @@ import volunteer_Management.volunteer_backend.jwt.JwtUtil;
 import volunteer_Management.volunteer_backend.repository.UserRepository;
 import volunteer_Management.volunteer_backend.dto.LoginRequest;
 
-
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.List;
 
 @RestController
@@ -81,18 +76,15 @@ public class AuthController {
             }
 
             user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-            if (user.getRole() == null || user.getRole().isEmpty()) {
-                user.setRole("USER");
-            }
+            user.setRole("USER"); // Force all users to be USER
 
             User savedUser = userRepository.save(user);
-            
+
             Map<String, Object> response = new HashMap<>();
             response.put("message", "✅ Signup successful");
             response.put("userId", savedUser.getId());
             response.put("email", savedUser.getEmail());
-            
+
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             e.printStackTrace();

@@ -2,10 +2,8 @@ package volunteer_Management.volunteer_backend.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import volunteer_Management.volunteer_backend.entity.Event;
-import volunteer_Management.volunteer_backend.entity.Volunteer;
 import volunteer_Management.volunteer_backend.service.EventService;
 
 import java.util.List;
@@ -40,7 +38,6 @@ public class EventController {
         }
     }
     @PutMapping("/{id}")
-  //  @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateEvent(@PathVariable Long id, @RequestBody Event updatedEvent) {
         try {
             Event updated = eventService.updateEvent(id, updatedEvent);
@@ -57,7 +54,6 @@ public class EventController {
         return ResponseEntity.ok("Event ID " + id + " sent to organization!");
     }
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteEvent(@PathVariable Long id) {
         try {
             eventService.deleteEvent(id);
