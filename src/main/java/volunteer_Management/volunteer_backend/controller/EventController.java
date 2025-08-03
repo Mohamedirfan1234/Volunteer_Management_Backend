@@ -18,15 +18,26 @@ public class EventController {
     @Autowired
     private EventService eventService;
 
-    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/add")
-    public Event createEvent(@RequestBody Event event) {
-        return eventService.saveEvent(event);
+    public ResponseEntity<?> createEvent(@RequestBody Event event) {
+        try {
+            Event savedEvent = eventService.saveEvent(event);
+            return ResponseEntity.ok(savedEvent);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Failed to create event: " + e.getMessage());
+        }
     }
 
     @GetMapping
-    public List<Event> getAllEvents() {
-        return eventService.getAllEvents();
+    public ResponseEntity<?> getAllEvents() {
+        try {
+            List<Event> events = eventService.getAllEvents();
+            return ResponseEntity.ok(events);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Failed to fetch events: " + e.getMessage());
+        }
     }
     @PutMapping("/{id}")
   //  @PreAuthorize("hasRole('ADMIN')")

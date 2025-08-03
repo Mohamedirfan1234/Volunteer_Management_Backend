@@ -38,20 +38,40 @@ public class AuthController {
     private JwtUtil jwtUtil;
 
     @PostMapping("/signup")
-    public ResponseEntity<String> signup(@RequestBody User user) {
-        Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
-        if (existingUser.isPresent()) {
-            return ResponseEntity.badRequest().body("❌ Email already registered");
+    public ResponseEntity<?> signup(@RequestBody User user) {
+        try {
+            // Validate required fields
+            if (user.getEmail() == null || user.getEmail().isEmpty()) {
+                return ResponseEntity.badRequest().body("❌ Email is required");
+            }
+            if (user.getPassword() == null || user.getPassword().isEmpty()) {
+                return ResponseEntity.badRequest().body("❌ Password is required");
+            }
+
+            Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
+            if (existingUser.isPresent()) {
+                return ResponseEntity.badRequest().body("❌ Email already registered");
+            }
+
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+            if (user.getRole() == null || user.getRole().isEmpty()) {
+                user.setRole("USER");
+            }
+
+            User savedUser = userRepository.save(user);
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "✅ Signup successful");
+            response.put("userId", savedUser.getId());
+            response.put("email", savedUser.getEmail());
+            
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("❌ Signup failed: " + e.getMessage());
         }
-
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-        if (user.getRole() == null || user.getRole().isEmpty()) {
-            user.setRole("USER");
-        }
-
-        userRepository.save(user);
-        return ResponseEntity.ok("✅ Signup successful");
     }
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginData) {
