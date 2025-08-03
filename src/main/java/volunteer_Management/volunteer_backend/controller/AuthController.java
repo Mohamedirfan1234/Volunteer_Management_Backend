@@ -45,6 +45,15 @@ public class AuthController {
         return ResponseEntity.ok("✅ Auth controller is working!");
     }
 
+    @PostMapping("/test-signup")
+    public ResponseEntity<?> testSignup(@RequestBody User user) {
+        try {
+            return ResponseEntity.ok("✅ Test signup received: " + user.getEmail());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("❌ Test failed: " + e.getMessage());
+        }
+    }
+
     @Autowired
     private UserRepository userRepository;
 
@@ -87,6 +96,7 @@ public class AuthController {
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             e.printStackTrace();
+            System.err.println("Signup error: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("❌ Signup failed: " + e.getMessage());
         }

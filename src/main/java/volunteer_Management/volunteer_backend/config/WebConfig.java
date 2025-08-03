@@ -13,8 +13,9 @@ public class WebConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**") // Allow all endpoints
-                        .allowedOrigins("http://localhost:3000", "https://*.onrender.com") // React app origin and Render domains
-                        .allowedMethods("*"); // Allow GET, POST, etc.
+                        .allowedOrigins("*") // Allow all origins for testing
+                        .allowedMethods("*") // Allow GET, POST, etc.
+                        .allowedHeaders("*"); // Allow all headers
             }
         };
     }
