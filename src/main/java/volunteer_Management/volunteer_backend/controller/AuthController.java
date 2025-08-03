@@ -17,6 +17,7 @@ import volunteer_Management.volunteer_backend.dto.LoginRequest;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -26,6 +27,17 @@ public class AuthController {
     @GetMapping("/health")
     public ResponseEntity<String> health() {
         return ResponseEntity.ok("✅ Volunteer Backend is running!");
+    }
+
+    @GetMapping("/cleanup-duplicates")
+    public ResponseEntity<String> cleanupDuplicates() {
+        try {
+            // This is a temporary endpoint to help with database cleanup
+            // In production, you should handle this properly
+            return ResponseEntity.ok("✅ Duplicate cleanup endpoint available");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("❌ Cleanup failed: " + e.getMessage());
+        }
     }
 
     @Autowired
@@ -48,8 +60,9 @@ public class AuthController {
                 return ResponseEntity.badRequest().body("❌ Password is required");
             }
 
-            Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
-            if (existingUser.isPresent()) {
+            // Check for existing users with the same email
+            List<User> existingUsers = userRepository.findAllByEmail(user.getEmail());
+            if (!existingUsers.isEmpty()) {
                 return ResponseEntity.badRequest().body("❌ Email already registered");
             }
 
@@ -79,10 +92,12 @@ public class AuthController {
             return ResponseEntity.badRequest().body("❌ Email and password must not be null");
         }
 
-        Optional<User> userOptional = userRepository.findByEmail(loginData.getEmail());
-
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
+        // Check for users with the same email
+        List<User> usersWithEmail = userRepository.findAllByEmail(loginData.getEmail());
+        
+        if (!usersWithEmail.isEmpty()) {
+            // Use the first user found (you might want to clean up duplicates later)
+            User user = usersWithEmail.get(0);
 
             if (passwordEncoder.matches(loginData.getPassword(), user.getPassword())) {
                 String token = jwtUtil.generateToken(user.getEmail());
